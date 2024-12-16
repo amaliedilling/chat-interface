@@ -1,7 +1,7 @@
 import React from 'react';
 import whiteLogo from '../public/assets/AAU_HVID.png';
 import Image from 'next/image';
-import chatConfig from '../../interfaceConfig';
+import chatConfig from '../config/interfaceConfig';
 import IconButton from '@components/IconButton';
 import { PlusIcon, RectangleStackIcon } from '@heroicons/react/24/outline';
 import { useHeader } from '../contexts/HeaderContext';
