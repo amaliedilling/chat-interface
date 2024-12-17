@@ -1,7 +1,7 @@
 import React from 'react'
 import StandardButton from '@components/StandardButton';
 import Link from 'next/link';
-import chatConfig from '../config/interfaceConfig';
+import chatConfig from '../../interfaceConfig';
 
 
 

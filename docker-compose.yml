@@ -1,13 +1,27 @@
 services:
-  backend:
+  backend: 
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    depends_on:
+     - vllm-api
+    ports:
+     - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+     - app-network
+
+  vllm-api:
     image: vllm/vllm-openai:v0.6.2
-    container_name: vllm-backend
+    container_name: vllm-api
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
     ports:
-      - "8000:8000"
+      - "8001:8000"
     ipc: host
     command:
       - "--model=meta-llama/Llama-3.2-3B-Instruct"
@@ -19,7 +33,7 @@ services:
       - app-network
 
   frontend:
-    container_name: next-frontend
+    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
