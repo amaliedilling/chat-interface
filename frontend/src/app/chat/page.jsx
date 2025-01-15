@@ -166,6 +166,7 @@ const ChatPage = () => {
                 evaluations: chatConfig.evaluationModes.map((evalMode) => ({
                     name: evalMode.name,
                     evaluationType: evalMode.type,
+                    description: evalMode.description,
                 })),
             };
     
@@ -245,6 +246,7 @@ const ChatPage = () => {
                                                     key={i}
                                                     evaluationName={evaluation.name}
                                                     evaluationType={evaluation.evaluationType}
+                                                    description={evaluation.description}
                                                     onChange={updateEvaluation}
                                                 />
                                             ))}

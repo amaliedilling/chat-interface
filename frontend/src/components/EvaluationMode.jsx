@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { ThumbDown, ThumbUp } from 'geist-icons';
 import clsx from 'clsx';
+import ToolTip from '../components/ToolTip';
 
-const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
+const EvaluationMode = ({ evaluationName, evaluationType, description, onChange }) => {
   // State to keep track of the user's selected value
   const [value, setValue] = useState(null);
 
@@ -21,8 +22,9 @@ const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
       value === null ? 'border border-primary-500 bg-bg-50 font-medium' : 'border bg-primary-50'
     )}
       >
-
+      <ToolTip content={description|| 'No description available'}>
       <p className="text-xs mb-2">{evaluationName}</p>
+      </ToolTip>
 
       {evaluationType === 'scale' && (
         <div className="flex justify-center space-x-4">
@@ -81,6 +83,8 @@ const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
 EvaluationMode.propTypes = {
   evaluationName: PropTypes.string.isRequired,
   evaluationType: PropTypes.oneOf(['scale', 'thumbs']).isRequired,
+  description: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
 };
 
 export default EvaluationMode;
