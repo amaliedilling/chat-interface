@@ -23,8 +23,11 @@ const ChatPage = () => {
     const [isLoadingResponse, setIsLoadingResponse] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [streamingDone, setStreamingDone] = useState(false);
+    const [evalComplete, setEvalComplete] = useState(true);
     const { setShowNewChatButton, setHandleNewChat, setManageChatsHandler } = useHeader(); // Access header context
     const [isPanelVisible, setIsPanelVisible] = useState(false);
+    const [evaluationCompletion, setEvaluationCompletion] = useState({});
+
 
 
     const assistantStreamingResponseRef = useRef("");
@@ -44,6 +47,12 @@ const ChatPage = () => {
     ];
 
     const lastSubmitTime = useRef(0);
+
+    useEffect(() => {
+        if (chatConfig.evaluationRequired && areAllEvaluationsComplete()) {
+            setErrorMessage(""); // Clear the error message dynamically
+        }
+    }, [evaluationCompletion]);
 
 
     // Set header context to show "New Chat" button
@@ -79,6 +88,27 @@ const ChatPage = () => {
         }
     }, [assistantStreamingResponse, chatElements]);
 
+    const handleEvaluationChange = (evaluationName, value) => {
+        setEvaluationCompletion((prev) => ({
+            ...prev,
+            [evaluationName]: value, // Update the value for the specific evaluation
+        }));
+    };
+
+
+    const areAllEvaluationsComplete = () => {
+        // Ensure evaluations exist before checking completion
+        if (!chatElements.some((el) => el.type === 'evaluation_block')) {
+            return true; // Skip evaluation check if no evaluation block exists
+        }
+
+        // Check if all evaluations have valid (non-null) values
+        return chatConfig.evaluationModes.every(
+            (evaluation) =>
+                evaluationCompletion[evaluation.name] !== null &&
+                evaluationCompletion[evaluation.name] !== undefined
+        );
+    };
 
     // New handler to reset chat elements
     const handleNewChat = () => {
@@ -90,6 +120,14 @@ const ChatPage = () => {
     };
 
     const handleSubmit = async () => {
+        if (chatConfig.evaluationRequired && !areAllEvaluationsComplete()) {
+            setErrorMessage("Please complete all evaluations before proceeding.");
+            return; // Stop submission until evaluations are complete
+        }
+
+        setErrorMessage(""); // Clear the error message when valid
+
+
         const now = Date.now();
         if (isLoadingResponse || !input.trim() || now - lastSubmitTime.current < 300) return; // Add debounce
         lastSubmitTime.current = now; // Update last submit time
@@ -152,11 +190,20 @@ const ChatPage = () => {
                 };
 
                 SetChatElements((prev) => [...prev, evaluationBlock]);
+                // Reset evaluation state for the next block
+            setEvaluationCompletion({});
 
                 setStreamingDone(true);
             }
         }
 
+    };
+
+    const updateEvaluation = (name, value) => {
+        setEvaluationCompletion((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
     return (
@@ -187,6 +234,7 @@ const ChatPage = () => {
                                                     key={i}
                                                     evaluationName={evaluation.name}
                                                     evaluationType={evaluation.evaluationType}
+                                                    onChange={updateEvaluation}
                                                 />
                                             ))}
                                         </div>
@@ -215,7 +263,7 @@ const ChatPage = () => {
 
                     {/* Display error message if there's an error */}
                     {errorMessage && (
-                        <div className="w-full p-4 text-red-500 text-center">
+                        <div className="w-full p-4 text-xs text-red-500 text-center">
                             {errorMessage}
                         </div>
                     )}
@@ -235,6 +283,7 @@ const ChatPage = () => {
                             setInput={setInput}
                             handleSubmit={handleSubmit}
                             loading={isLoadingResponse}
+
                         />
                     </div>
                     < Footer />

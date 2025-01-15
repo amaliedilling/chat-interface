@@ -11,10 +11,10 @@ const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
 
   const handleSelect = (val) => {
     setValue(val);
-    if (onChange){
-      onChange(val); // Notify parent about the change
+    if (onChange) {
+        onChange(evaluationName, val); // Pass name and value to parent
     }
-  };
+};
 
   return (
     <div className={clsx('px-5 py-2 rounded-lg w-full max-w-md text-center text-primary-500',
@@ -30,7 +30,7 @@ const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
             <div key={num} className="flex flex-col items-center">
               <button
                 className={`w-3 h-3 rounded-full ${value === num ? 'bg-primary-500' : 'border border-primary-500'}`}
-                onClick={() => setValue(num)}
+                onClick={() => handleSelect(num)}
               />
               <span className="text-xs mt-1">{num}</span>
             </div>
@@ -42,7 +42,7 @@ const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
         <div className="flex space-x-4 justify-center">
           {/* Thumbs Up Button */}
           <button
-            onClick={() => setValue('thumbs-up')}
+            onClick={() => handleSelect('thumbs-up')}
           >
             <div
               className={clsx(
@@ -59,7 +59,7 @@ const EvaluationMode = ({ evaluationName, evaluationType, onChange }) => {
 
           {/* Thumbs Down Button */}
           <button
-            onClick={() => setValue('thumbs-down')}
+            onClick={() => handleSelect('thumbs-down')}
           >
             <div
               className={clsx(
