@@ -119,82 +119,93 @@ const ChatPage = () => {
         setStreamingDone(false);
     };
 
-    const handleSubmit = async () => {
+    const checkEvaluations = () => {
         if (chatConfig.evaluationRequired && !areAllEvaluationsComplete()) {
             setErrorMessage("Please complete all evaluations before proceeding.");
-            return; // Stop submission until evaluations are complete
+            return false; // Validation failed
         }
+        setErrorMessage(""); // Clear error if validation passes
+        return true; // Validation passed
+    };
 
-        setErrorMessage(""); // Clear the error message when valid
-
-
+    const debounceCheck = (input, isLoading, lastSubmitTime, debounceInterval = 300) => {
         const now = Date.now();
-        if (isLoadingResponse || !input.trim() || now - lastSubmitTime.current < 300) return; // Add debounce
-        lastSubmitTime.current = now; // Update last submit time
+        return isLoading || !input.trim() || now - lastSubmitTime < debounceInterval;
+    };
 
+    const addUserMessage = () => {
         const userMessage = { content: input, isUser: true, type: 'message' };
         SetChatElements(prev => [...prev, userMessage]);
-        setInput("");
-        assistantStreamingResponseRef.current = ""; // Clear the streaming response content ref
-        setAssistantStreamingResponse("");          // Clear the response state as well
-        setErrorMessage("");                        // Clear any previous error messages
+        setInput(""); // Clear input field
+        return userMessage;
+    };
+
+    const fetchAssistantResponse = async (formattedMessages, userMessage) => {
+        await postChatCompletions(
+            formattedMessages,
+            userMessage,
+            (deltaContent) => {
+                assistantStreamingResponseRef.current += deltaContent;
+                setAssistantStreamingResponse(prev => prev + deltaContent);
+                scrollToBottom();
+            }
+        );
+    };
+
+    const processAssistantResponse = () => {
+        if (assistantStreamingResponseRef.current) {
+            const assistantFinalMessage = {
+                content: assistantStreamingResponseRef.current,
+                isUser: false,
+                type: 'message',
+            };
+            SetChatElements(prev => [...prev, assistantFinalMessage]);
+    
+            const evaluationBlock = {
+                type: 'evaluation_block',
+                evaluations: chatConfig.evaluationModes.map((evalMode) => ({
+                    name: evalMode.name,
+                    evaluationType: evalMode.type,
+                })),
+            };
+    
+            SetChatElements(prev => [...prev, evaluationBlock]);
+            setEvaluationCompletion({}); // Reset for the next evaluation block
+            setStreamingDone(true);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!checkEvaluations()) return; // Return if validation fails
+
+        if (debounceCheck(input, isLoadingResponse, lastSubmitTime.current)) return;
+        lastSubmitTime.current = Date.now(); // Update last submit time
+
+        const userMessage = addUserMessage();
+
+        // Clear streaming states
+        assistantStreamingResponseRef.current = ""; 
+        setAssistantStreamingResponse("");          
+        setErrorMessage("");                        
         setIsLoadingResponse(true);
         setStreamingDone(false);
 
         try {
             // Convert messages to the expected format with 'role' and 'content'
-            const formattedMessages = chatElements.map((message) => {
-                return {
+            const formattedMessages = chatElements.map((message) => ({
                     role: message.isUser ? "user" : "assistant",
                     content: message.content,
-                };
-            });
+                }));
 
             // Pass formatted messages to the API call
-            await postChatCompletions(
-                formattedMessages,
-                userMessage,
-                (deltaContent) => {
-                    // Update the accumulated content in the ref
-                    assistantStreamingResponseRef.current += deltaContent;
-
-                    // Set the response state to trigger re-render less frequently
-                    setAssistantStreamingResponse(prev => prev + deltaContent);
-
-                    // Scroll to the bottom to follow the streamed response
-                    scrollToBottom();
-                }
-            );
+            await fetchAssistantResponse(formattedMessages, userMessage);
 
         } catch (error) {
             console.error("Error fetching LLM response:", error);
             setErrorMessage("An error occurred while fetching the response. Please try again.");  // Set error message
         } finally {
+            processAssistantResponse();
             setIsLoadingResponse(false);
-            // After streaming ends, add the assistant message to the state
-            if (assistantStreamingResponseRef.current) {
-                const assistantFinalMessage = {
-                    content: assistantStreamingResponseRef.current,
-                    isUser: false,
-                    type: 'message', // Identifies this as a message element
-                };
-                SetChatElements((prev) => [...prev, assistantFinalMessage]);
-
-                // Create an evaluation block
-                const evaluationBlock = {
-                    type: 'evaluation_block',
-                    evaluations: chatConfig.evaluationModes.map((evalMode) => ({
-                        name: evalMode.name,
-                        evaluationType: evalMode.type,
-                    })),
-                };
-
-                SetChatElements((prev) => [...prev, evaluationBlock]);
-                // Reset evaluation state for the next block
-            setEvaluationCompletion({});
-
-                setStreamingDone(true);
-            }
         }
 
     };
