@@ -16,10 +16,10 @@ const MessageBubble = ({ message, isUser }) => {
       )}
     >
       {isUser ? (
-        <p className="text-xs lg:text-sm whitespace-pre-wrap">{message}</p>
+        <p className="text-bodySmall md:text-bodyMedium lg:text-bodyLarge whitespace-pre-wrap">{message}</p>
       ) : (
         <ReactMarkdown
-          className="text-xs lg:text-sm markdown-content" // Add a class to style markdown content
+          className="text-bodySmall md:text-bodyMedium lg:text-bodyLarge markdown-content" // Add a class to style markdown content
           remarkPlugins={[remarkGfm]}
           components={{
             a: ({ href, children }) => (

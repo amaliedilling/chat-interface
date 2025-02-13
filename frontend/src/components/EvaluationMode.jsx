@@ -19,11 +19,11 @@ const EvaluationMode = ({ evaluationName, evaluationType, description, onChange 
 
   return (
     <div className={clsx('px-5 py-2 rounded-lg w-full max-w-md text-center text-primary-500',
-      value === null ? 'border border-primary-500 bg-bg-50 font-medium' : 'border bg-primary-50'
+      value === null ? 'border border-primary-500 bg-bg-50' : 'border bg-primary-50 font-light'
     )}
       >
       <ToolTip content={description|| 'No description available'}>
-      <p className="text-xs mb-2">{evaluationName}</p>
+      <p className="text-bodySmall lg:text-bodyMedium mb-2">{evaluationName}</p>
       </ToolTip>
 
       {evaluationType === 'scale' && (
@@ -34,7 +34,7 @@ const EvaluationMode = ({ evaluationName, evaluationType, description, onChange 
                 className={`w-3 h-3 rounded-full ${value === num ? 'bg-primary-500' : 'border border-primary-500'}`}
                 onClick={() => handleSelect(num)}
               />
-              <span className="text-xs mt-1">{num}</span>
+              <span className="text-sm lg:text-bodySmall mt-1">{num}</span>
             </div>
           ))}
         </div>

@@ -9,7 +9,7 @@ import { HeaderProvider } from '../contexts/HeaderContext';
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-bg-100 text-foreground">
+      <body className="text-foreground">
         {/* Wrap your application with HeaderProvider */}
         <HeaderProvider>
           <Frame>

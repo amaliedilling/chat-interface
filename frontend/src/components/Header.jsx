@@ -1,5 +1,6 @@
 import React from 'react';
-import whiteLogo from '../public/assets/AAU_HVID.png';
+import whiteLogo from '/public/assets/AAU_HVID.png';
+import blueLogo from '/public/assets/AAU_AAUBL.png';
 import Image from 'next/image';
 import chatConfig from '../../interfaceConfig';
 import IconButton from '@components/IconButton';
@@ -10,7 +11,7 @@ const Header = () => {
     const { showNewChatButton, handleNewChat, manageChatsHandler} = useHeader(); // Access handleNewChat from the context
 
     return (
-        <div name='header' className='w-full inset-x-0 top-0 h-30 md:h-34 bg-primary-500 text-white '>
+        <div name='header' className='w-full inset-x-0 top-0 h-30 md:h-34 text-primary-500'>
             <div className='flex flex-row m-2 justify-between items-center py-4 md:py-6 lg:py-8'>
                 {/* Left side button */}
                 <div className='flex items-center px-4'>
@@ -21,7 +22,7 @@ const Header = () => {
                             ariaLabel="Start new chat"
                             bgColor="bg-transparent"
                             hoverBgColor="hover:bg-primary-50"
-                            iconColor="text-white"
+                            iconColor="text-primary-500"
                             hoverIconColor="group-hover:text-primary-500"
                             iconClassname="h-6 w-6"
                         />
@@ -39,7 +40,7 @@ const Header = () => {
                         </p>
                     </div>
                     <div className='px-4'>
-                        <Image src={whiteLogo} alt='AAU logo' height='60' />
+                        <Image src={blueLogo} alt='AAU logo' height='60' />
                     </div>
                 </div>
 
@@ -52,7 +53,7 @@ const Header = () => {
                             ariaLabel="Manage chats"
                             bgColor="bg-transparent"
                             hoverBgColor="hover:bg-primary-50"
-                            iconColor="text-white"
+                            iconColor="text-primary-500"
                             hoverIconColor="group-hover:text-primary-500"
                             iconClassname="h-6 w-6"
                         />

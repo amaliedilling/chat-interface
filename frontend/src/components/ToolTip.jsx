@@ -8,7 +8,7 @@ const Tooltip = ({ content, children }) => {
     const [isVisible, setIsVisible] = useState(false);
 
     return (
-        <div className="relative inline-block">
+        <div className="relative ">
             {/* The element the tooltip is attached to */}
             <div
                 onMouseEnter={() => setIsVisible(true)}
@@ -22,7 +22,7 @@ const Tooltip = ({ content, children }) => {
             {isVisible && (
                 <div className={clsx(
                     'absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2',
-                    'bg-primary-50 text-black text-xs font-light py-1 px-2 rounded shadow-lg w-fit whitespace-normal text-wrap'
+                    'bg-primary-50 text-black text-sm lg:text-bodySmall font-light py-1 px-2 rounded shadow-lg w-full whitespace-normal text-wrap'
                 )}>
                     {content}
                 </div>

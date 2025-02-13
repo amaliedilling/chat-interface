@@ -19,7 +19,7 @@ const IconButton = ({
       onClick={onClick}
       aria-label={ariaLabel}
       className={clsx(
-        'flex items-center justify-center rounded-lg h-10 w-10 lg:h-11 lg:w-11 transition duration-200',
+        'flex items-center justify-center rounded-lg h-11 w-11 lg:h-11 lg:w-11 transition duration-200',
         bgColor,
         hoverBgColor,
         className,

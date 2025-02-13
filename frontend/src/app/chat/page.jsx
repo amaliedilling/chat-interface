@@ -160,7 +160,7 @@ const ChatPage = () => {
                 type: 'message',
             };
             SetChatElements(prev => [...prev, assistantFinalMessage]);
-    
+
             const evaluationBlock = {
                 type: 'evaluation_block',
                 evaluations: chatConfig.evaluationModes.map((evalMode) => ({
@@ -169,7 +169,7 @@ const ChatPage = () => {
                     description: evalMode.description,
                 })),
             };
-    
+
             SetChatElements(prev => [...prev, evaluationBlock]);
             setEvaluationCompletion({}); // Reset for the next evaluation block
             setStreamingDone(true);
@@ -185,18 +185,18 @@ const ChatPage = () => {
         const userMessage = addUserMessage();
 
         // Clear streaming states
-        assistantStreamingResponseRef.current = ""; 
-        setAssistantStreamingResponse("");          
-        setErrorMessage("");                        
+        assistantStreamingResponseRef.current = "";
+        setAssistantStreamingResponse("");
+        setErrorMessage("");
         setIsLoadingResponse(true);
         setStreamingDone(false);
 
         try {
             // Convert messages to the expected format with 'role' and 'content'
             const formattedMessages = chatElements.map((message) => ({
-                    role: message.isUser ? "user" : "assistant",
-                    content: message.content,
-                }));
+                role: message.isUser ? "user" : "assistant",
+                content: message.content,
+            }));
 
             // Pass formatted messages to the API call
             await fetchAssistantResponse(formattedMessages, userMessage);
@@ -231,7 +231,7 @@ const ChatPage = () => {
                 >
                     {/* Messages Section */}
                     {chatElements.length > 0 && (
-                        <div className="w-full flex-1 flex flex-col items-start p-4 space-y-2 bg-bg-100 overflow-y-auto relative">
+                        <div className="w-full flex-1 flex flex-col items-start p-4 space-y-2 bg-bg-100 dark:bg-tertiary-500 overflow-y-auto relative">
                             <div className="flex-grow"></div>
                             {chatElements.map((element, index) => {
                                 if (element.type === 'message') {
@@ -276,7 +276,7 @@ const ChatPage = () => {
 
                     {/* Display error message if there's an error */}
                     {errorMessage && (
-                        <div className="w-full p-4 text-xs text-red-500 text-center">
+                        <div className="w-full p-4 text-bodySmall md:text-bodyMedium lg:text-bodyLarge text-error-500 text-center">
                             {errorMessage}
                         </div>
                     )}
@@ -284,8 +284,8 @@ const ChatPage = () => {
                     {/* Placeholder Text */}
                     {chatElements.length === 0 && (
                         <div className="flex-1 w-2/3 flex flex-col items-center justify-center text-center text-tertiary-500 p-4">
-                            <p className="text-sm ">How can I help?</p>
-                            <p className="text-sm font-light mt-4">Start the chat by sending a message or uploading a file for me to review.</p>
+                            <p className="text-headerMedium font-semibold ">How can I help?</p>
+                            <p className="text-bodySmall mt-4">Start the chat by sending a message or uploading a file for me to review.</p>
                         </div>
                     )}
 
@@ -304,7 +304,7 @@ const ChatPage = () => {
 
                 {/* Side Panel */}
                 <SidePanel isVisible={isPanelVisible} onClose={() => setIsPanelVisible(false)}>
-                    <h2 className="text-base font-medium my-2 text-center text-primary-500">CHAT HISTORY</h2>
+                    <h2 className="text-headerSmall font-semibold my-2 text-center text-primary-500">CHAT HISTORY</h2>
                     <ChatHistory chatHistory={chatHistory} />
                 </SidePanel>
 
